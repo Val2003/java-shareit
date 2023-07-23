@@ -60,8 +60,7 @@ public class ItemController {
         if (userId == null) {
             throw new EmptyHeaderException();
         }
-        long id = Long.parseLong(userId);
-        return id;
+        return Long.parseLong(userId);
     }
 
 }
