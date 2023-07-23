@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class UserServiceImpl implements UserService {
 
-    private UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public UserServiceImpl(UserStorage userStorage) {

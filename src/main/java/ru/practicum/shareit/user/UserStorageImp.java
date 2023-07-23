@@ -12,7 +12,7 @@ import java.util.Map;
 public class UserStorageImp implements UserStorage {
 
     private long id = 1;
-    private Map<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @Override
     public User getUserById(long id) {

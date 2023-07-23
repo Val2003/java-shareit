@@ -12,7 +12,7 @@ import java.util.Map;
 @Component
 public class ItemStorageImp implements ItemStorage {
 
-    private Map<Long, Item> items = new HashMap();
+    private final Map<Long, Item> items = new HashMap();
     private long id = 1;
 
     @Override

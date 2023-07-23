@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 public class ItemServiceImpl implements ItemService {
 
-    private ItemStorage itemStorage;
-    private UserService userService;
+    private final ItemStorage itemStorage;
+    private final UserService userService;
 
     @Autowired
     public ItemServiceImpl(ItemStorage itemStorage, UserService userService) {
