@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.service.UserService;
 
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemStorage itemStorage;
+    private UserService userService;
 
 
     @Override
@@ -48,5 +50,10 @@ public class ItemServiceImpl implements ItemService {
         return itemStorage.getAvailableItems(userId, text).stream()
                 .map(ItemMapper.INSTANCE::toItemDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDto getUserDTO(Long userId) {
+        return userService.getUser(userId);
     }
 }

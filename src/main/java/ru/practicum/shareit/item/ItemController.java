@@ -32,7 +32,8 @@ public class ItemController {
         log.info("POST /items : user ID {} creates item from DTO - {}", userId, itemDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(itemService.createItem(userService.getUser(userId), itemDto));
+                //userService.getUser(userId)
+                .body(itemService.createItem(itemService.getUserDTO(userId), itemDto));
 
     }
 
