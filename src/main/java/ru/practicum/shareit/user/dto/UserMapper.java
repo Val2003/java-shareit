@@ -1,10 +1,7 @@
-package ru.practicum.shareit.mapper;
+package ru.practicum.shareit.user.dto;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-
-
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 @Mapper(componentModel = "spring")

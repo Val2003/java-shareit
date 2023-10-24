@@ -17,7 +17,7 @@ import java.util.List;
 
 
 @Slf4j
-//@RestController
+@RestController
 @Controller
 @RequestMapping("/items")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
