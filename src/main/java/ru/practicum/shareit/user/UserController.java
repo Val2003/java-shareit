@@ -1,46 +1,55 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.mapper.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable("id") long id) {
-        return userService.getUserById(id);
-    }
-
-    @GetMapping
-    public List<UserDto> getUsers() {
-        return userService.getUsers();
-    }
 
     @PostMapping
-    public UserDto create(@RequestBody @Valid UserDto userDto) {
-        return userService.add(userDto);
+    public ResponseEntity<UserDto> updateUser(@RequestBody @Valid UserDto userDto) {
+        log.info("POST /users : create user from DTO - {}", userDto);
+        return ResponseEntity.ok().body(userService.createUser(UserMapper.INSTANCE.toUser(userDto)));
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable("id") long id, @RequestBody UserDto userDto) {
-        return userService.update(id, userDto);
+    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
+        log.info("PATCH /users/{} : update user by ID from DTO - {}", id, userDto);
+        return ResponseEntity.ok().body(userService.updateUser(UserMapper.INSTANCE.toUser(userDto), id));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable("id") Long id) {
+        log.info("GET /users/{} : get user by ID", id);
+        return ResponseEntity.ok().body(userService.getUser(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        log.info("GET /users : get list of all users");
+        return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") long id) {
-        userService.delete(id);
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        log.info("DELETE /users/{} : delete user by ID", id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
