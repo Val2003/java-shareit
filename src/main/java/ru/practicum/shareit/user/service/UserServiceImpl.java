@@ -27,7 +27,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = EntityMapper.INSTANCE.toUser(userDto);
-        try {return EntityMapper.INSTANCE.toUserDto(userRepository.save(user));
+        try {
+            return EntityMapper.INSTANCE.toUserDto(userRepository.save(user));
         } catch (ConstraintViolationException e) {
             throw new ConflictException("Mail " + userDto.getEmail() + " already used by another user");
         }
