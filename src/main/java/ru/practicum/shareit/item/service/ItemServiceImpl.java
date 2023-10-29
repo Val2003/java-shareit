@@ -21,7 +21,6 @@ import ru.practicum.shareit.mapper.EntityMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -36,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private static final Sort SORT_DESC = Sort.by(Sort.Direction.DESC, "end");
     private static final Sort SORT_ASC = Sort.by(Sort.Direction.ASC, "start");
 
-    private final UserService userService;
+
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final ItemRepository itemRepository;
@@ -45,8 +44,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(Long userId, ItemDto itemDto) throws EntityNotFoundException {
-        UserDto owner = userService.getUser(userId);
-        itemDto.setOwner(EntityMapper.INSTANCE.toUser(owner));
+        UserDto owner = EntityMapper.INSTANCE.toUserDto(userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User with ID " + userId + " does not exist")));
+        itemDto.setOwner(owner);
         return EntityMapper.INSTANCE.toItemDto(itemRepository.save(EntityMapper.INSTANCE.toItem(itemDto)));
     }
 

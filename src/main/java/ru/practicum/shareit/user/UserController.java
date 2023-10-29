@@ -20,14 +20,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity createUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
         log.info("POST /users : create user from DTO - {}", userDto);
         return ResponseEntity
                 .status(HttpStatus.OK).body(userService.createUser(userDto));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity updateUser(@PathVariable("id") Long id,
+    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id,
                                      @RequestBody UserDto userDto) {
         log.info("PATCH /users/{} : update user by ID from DTO - {}", id, userDto);
         return ResponseEntity
