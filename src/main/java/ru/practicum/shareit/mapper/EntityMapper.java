@@ -3,8 +3,8 @@ package ru.practicum.shareit.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.AnswerBookingDto;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.InfoBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.AnswerItemDto;
@@ -16,6 +16,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface EntityMapper {
@@ -85,4 +86,11 @@ public interface EntityMapper {
 
     @Mapping(target = "authorName", source = "author.name")
     CommentDto toCommentDto(Comment comment);
+
+    default InfoBookingDto toInfoBookingDto(Optional<Booking> firstByItemIdAndItemOwnerIdAndStartIsBefore) {
+
+        return firstByItemIdAndItemOwnerIdAndStartIsBefore.map(this::toInfoBookingDto).orElse(null);
+    }
+
+
 }
