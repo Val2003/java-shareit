@@ -2,8 +2,9 @@ package ru.practicum.shareit.item.dto;
 
 import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -11,11 +12,13 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class ItemDto {
 
     private Long id;
 
-    @NotBlank(message = "Item's name  is missing")
+    @NotBlank(message = "Item's name is required")
+
     private String name;
 
     @NotEmpty(message = "Item's description can't be empty")
@@ -25,14 +28,8 @@ public class ItemDto {
     @NotNull(message = "Item's available status can't be null")
     private Boolean available;
 
-    private User owner;
+    private UserDto owner;
 
     private Long requestId;
 
-    public ItemDto() {
-
-    }
-
-    public ItemDto(String name, String description, Boolean available, User owner, long request) {
-    }
 }
