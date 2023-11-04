@@ -29,7 +29,7 @@ class ItemRequestRepositoryTest {
     private UserRepository userRepository;
 
     @BeforeAll
-    private void beforeAll() {
+    public void beforeAll() {
         requester1 = new User(1L, "user1", "mail1@ya.ru");
         requester2 = new User(2L, "user2", "mail2@ya.ru");
         userRepository.save(requester1);

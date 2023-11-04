@@ -24,21 +24,21 @@ public class ItemRequestController {
     private final ItemRequestService itemRequestService;
 
     @PostMapping
-    public ResponseEntity<AnswerItemRequestDto> createItemRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<AnswerItemRequestDto> createItemRequest(@RequestHeader(userIdHeader) Long userId,
                                                                   @Valid @RequestBody ItemRequestDto itemRequestDto) {
         log.info("POST /requests : user ID {} creates itemRequest from DTO - {}", userId, itemRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(itemRequestService.createItemRequest(userId, itemRequestDto));
     }
 
     @GetMapping
-    public ResponseEntity<List<AnswerItemRequestDto>> getUsersItemRequests(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<List<AnswerItemRequestDto>> getUsersItemRequests(@RequestHeader(userIdHeader) Long userId) {
         log.info("GET /requests : get list of itemRequests by user ID {}", userId);
         return ResponseEntity.status(HttpStatus.OK).body(itemRequestService.getUsersItemRequests(userId));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<AnswerItemRequestDto>> getItemRequests(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(userIdHeader) Long userId,
             @RequestParam(value = "from", defaultValue = "0", required = false) int from,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
         if (from < 0 || size < 1) {
@@ -50,7 +50,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     public ResponseEntity<AnswerItemRequestDto> getItemRequest(@PathVariable("requestId") Long requestId,
-                                                               @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                                               @RequestHeader(userIdHeader) Long userId) {
         log.info("GET /requests/{} : get itemRequest by ID, user ID {}", requestId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(itemRequestService.getItemRequestById(requestId, userId));
     }
