@@ -23,7 +23,7 @@ public class UserController {
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
         log.info("POST /users : create user from DTO - {}", userDto);
         return ResponseEntity
-                .status(HttpStatus.OK).body(userService.createUser(userDto));
+                .status(HttpStatus.CREATED).body(userService.createUser(userDto));
     }
 
     @PatchMapping("/{id}")

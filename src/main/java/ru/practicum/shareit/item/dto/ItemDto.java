@@ -4,7 +4,8 @@ import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.user.dto.UserDto;
+import lombok.NoArgsConstructor;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ItemDto {
 
@@ -28,7 +30,7 @@ public class ItemDto {
     @NotNull(message = "Item's available status can't be null")
     private Boolean available;
 
-    private UserDto owner;
+    private User owner;
 
     private Long requestId;
 

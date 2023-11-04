@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.InfoBookingDto;
@@ -18,13 +19,19 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.mapper.EntityMapper;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,19 +42,25 @@ public class ItemServiceImpl implements ItemService {
     private static final Sort SORT_DESC = Sort.by(Sort.Direction.DESC, "end");
     private static final Sort SORT_ASC = Sort.by(Sort.Direction.ASC, "start");
 
-
+    private final UserService userService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
 
     @Override
     public ItemDto createItem(Long userId, ItemDto itemDto) throws EntityNotFoundException {
-        UserDto owner = EntityMapper.INSTANCE.toUserDto(userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User with ID " + userId + " does not exist")));
-        itemDto.setOwner(owner);
-        return EntityMapper.INSTANCE.toItemDto(itemRepository.save(EntityMapper.INSTANCE.toItem(itemDto)));
+        User owner = EntityMapper.INSTANCE.toUser(userService.getUser(userId));
+        ItemRequest request = null;
+        if (itemDto.getRequestId() != null) {
+            request = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "ItemRequest with ID " + itemDto.getRequestId() + " does not exist"));
+        }
+        Item item = EntityMapper.INSTANCE.toItem(itemDto, owner, request);
+        return EntityMapper.INSTANCE.toItemDto(itemRepository.save(item));
     }
 
     @Override
@@ -100,13 +113,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<AnswerItemDto> getItemsByUser(Long userId) {
+    public List<AnswerItemDto> getItemsByUser(Long userId, Pageable pageable) {
         if (!userRepository.existsById(userId)) {
             throw new EntityNotFoundException("User with ID " + userId + " does not exist");
         }
 
         LocalDateTime now = LocalDateTime.now();
-        List<Item> items = itemRepository.findByOwner_Id(userId);
+        List<Item> items = itemRepository.findByOwner_Id(userId, pageable);
         List<Long> itemsId = items
                 .stream()
                 .map(Item::getId)
@@ -163,11 +176,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAvailableItems(Long userId, String text) {
+    public List<ItemDto> getAvailableItems(Long userId, String text, Pageable pageable) {
         if (text.isBlank()) {
             return new ArrayList<>();
         } else {
-            return itemRepository.searchAvailableItems("%" + text + "%")
+            return itemRepository.searchAvailableItems(text, pageable)
                     .stream()
                     .map(EntityMapper.INSTANCE::toItemDto)
                     .collect(Collectors.toList());

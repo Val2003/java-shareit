@@ -12,19 +12,33 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.dto.AnswerItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface EntityMapper {
     EntityMapper INSTANCE = Mappers.getMapper(EntityMapper.class);
 
+    default Item toItem(ItemDto itemDto, User owner, ItemRequest request) {
+        return Item.builder()
+                .id(itemDto.getId())
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
+                .owner(owner)
+                .request(request)
+                .build();
+    }
 
-    Item toItem(ItemDto itemDto);
-
+    @Mapping(target = "requestId", source = "request.id")
     ItemDto toItemDto(Item item);
 
     default Item updatedItem(ItemDto itemDto, Item item) {
@@ -87,10 +101,26 @@ public interface EntityMapper {
     @Mapping(target = "authorName", source = "author.name")
     CommentDto toCommentDto(Comment comment);
 
+    default AnswerItemRequestDto toAnswerItemRequestDto(ItemRequest itemRequest, List<Item> items) {
+        return AnswerItemRequestDto.builder()
+                .id(itemRequest.getId())
+                .description(itemRequest.getDescription())
+                .created(itemRequest.getCreated())
+                .items(items.stream().map(this::toItemDto).collect(Collectors.toList()))
+                .build();
+    }
+
     default InfoBookingDto toInfoBookingDto(Optional<Booking> firstByItemIdAndItemOwnerIdAndStartIsBefore) {
 
         return firstByItemIdAndItemOwnerIdAndStartIsBefore.map(this::toInfoBookingDto).orElse(null);
     }
 
+    default ItemRequest toItemRequest(ItemRequestDto request, User requester) {
+        return ItemRequest.builder()
+                .description(request.getDescription())
+                .requester(requester)
+                .created(LocalDateTime.now())
+                .build();
+    }
 
 }
