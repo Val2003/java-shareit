@@ -15,6 +15,7 @@ import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.mapper.EntityMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -48,7 +49,7 @@ class BookingControllerTest {
     ObjectMapper mapper;
 
     User user;
-    User owner;
+    UserDto owner;
     Item item;
     UserDto userDto;
     ItemDto itemDto;
@@ -58,8 +59,8 @@ class BookingControllerTest {
     @BeforeEach
     void beforeEach() {
         user = new User(1L, "user", "user@ya.ru");
-        owner = new User(2L, "owner", "owner@ya.ru");
-        item = new Item(1L, "item", "desc", true, owner, null);
+        owner = new UserDto(2L, "owner", "owner@ya.ru");
+        item = new Item(1L, "item", "desc", true, EntityMapper.INSTANCE.toUser(owner), null);
         userDto = new UserDto(1L, "user", "user@ya.ru");
         itemDto = new ItemDto(1L, "item", "desc", true, owner, null);
         answerBookingDto = new AnswerBookingDto(

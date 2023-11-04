@@ -89,7 +89,7 @@ class ItemServiceImplTest {
         request1 = new ItemRequest(2L, "req2", user2, LocalDateTime.now());
         item1 = new Item(1L, "item1", "des1", true, user1, request1);
         item2 = new Item(2L, "item2", "des2", true, user1, null);
-        itemDto1 = new ItemDto(1L, "item1", "des1", true, user1, request1.getId());
+        itemDto1 = new ItemDto(1L, "item1", "des1", true, userDto1, request1.getId());
         booking1 = new Booking(1L, LocalDateTime.now().minusDays(2), LocalDateTime.now().minusDays(1),
                 item1, user2, APPROVED);
 
@@ -131,7 +131,7 @@ class ItemServiceImplTest {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item1));
         when(itemRepository.save(any())).thenReturn(item1);
 
-        ItemDto newItemDto = new ItemDto(null, "upd", "upd", false, user1, request1.getId());
+        ItemDto newItemDto = new ItemDto(null, "upd", "upd", false, userDto1, request1.getId());
 
         ItemDto res = itemService.updateItem(itemDto1.getId(), newItemDto, user1.getId());
 
@@ -149,7 +149,7 @@ class ItemServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item1));
 
-        ItemDto newItemDto = new ItemDto(null, "upd", "upd", false, user1, request1.getId());
+        ItemDto newItemDto = new ItemDto(null, "upd", "upd", false, userDto1, request1.getId());
 
         assertThrows(EntityNotFoundException.class,
                 () -> itemService.updateItem(itemDto1.getId(), newItemDto, user1.getId()));
@@ -236,7 +236,7 @@ class ItemServiceImplTest {
         assertEquals(res.get(0).getName(), item1.getName());
         assertEquals(res.get(0).getDescription(), item1.getDescription());
         assertEquals(res.get(0).getAvailable(), item1.getAvailable());
-        assertEquals(res.get(0).getOwner().toString(), user1.toString());
+        assertEquals(res.get(0).getOwner().toString(), userDto1.toString());
         assertEquals(res.get(0).getRequestId(), item1.getRequest().getId());
 
         assertEquals(ItemDto.class, res.get(1).getClass());
@@ -244,7 +244,7 @@ class ItemServiceImplTest {
         assertEquals(res.get(1).getName(), item2.getName());
         assertEquals(res.get(1).getDescription(), item2.getDescription());
         assertEquals(res.get(1).getAvailable(), item2.getAvailable());
-        assertEquals(res.get(1).getOwner().toString(), user1.toString());
+        assertEquals(res.get(1).getOwner().toString(), userDto1.toString());
         assertNull(res.get(1).getRequestId());
     }
 

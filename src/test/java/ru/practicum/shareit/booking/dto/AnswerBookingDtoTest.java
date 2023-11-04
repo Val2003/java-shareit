@@ -7,7 +7,6 @@ import org.springframework.boot.test.json.JacksonTester;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -16,13 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JsonTest
 class AnswerBookingDtoTest {
 
-    @Autowired
-    private JacksonTester<AnswerBookingDto> json;
-
-    private final User owner = new User(1L, "owner", "owner@ya.ru");
-
+    private final UserDto owner = new UserDto(1L, "owner", "owner@ya.ru");
     private final UserDto userDto = new UserDto(2L, "user", "mail@ya.ru");
-
     private final ItemDto itemDto = new ItemDto(
             1L,
             "item",
@@ -30,7 +24,6 @@ class AnswerBookingDtoTest {
             true,
             owner,
             1L);
-
     private final AnswerBookingDto answerBookingDto = new AnswerBookingDto(
             1L,
             LocalDateTime.now().plusDays(1),
@@ -38,6 +31,8 @@ class AnswerBookingDtoTest {
             itemDto,
             userDto,
             Status.WAITING);
+    @Autowired
+    private JacksonTester<AnswerBookingDto> json;
 
     @Test
     void answerBookingDto() throws Exception {

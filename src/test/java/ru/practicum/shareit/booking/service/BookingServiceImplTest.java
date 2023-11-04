@@ -19,6 +19,7 @@ import ru.practicum.shareit.exceptions.UnsupportedState;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.mapper.EntityMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -49,7 +50,7 @@ class BookingServiceImplTest {
 
 
     User user;
-    User owner;
+    UserDto owner;
     Item item;
     Booking booking;
     UserDto userDto;
@@ -63,8 +64,8 @@ class BookingServiceImplTest {
         pageable = PageRequest.of(0, 10);
         bookingService = new BookingServiceImpl(userRepository, itemRepository, bookingRepository);
         user = new User(1L, "user", "user@ya.ru");
-        owner = new User(2L, "owner", "owner@ya.ru");
-        item = new Item(1L, "item", "desc", true, owner, null);
+        owner = new UserDto(2L, "owner", "owner@ya.ru");
+        item = new Item(1L, "item", "desc", true, EntityMapper.INSTANCE.toUser(owner), null);
         userDto = new UserDto(1L, "user", "user@ya.ru");
         itemDto = new ItemDto(1L, "item", "desc", true, owner, null);
         booking = new Booking(

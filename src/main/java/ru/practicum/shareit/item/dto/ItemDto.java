@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -30,7 +30,7 @@ public class ItemDto {
     @NotNull(message = "Item's available status can't be null")
     private Boolean available;
 
-    private User owner;
+    private UserDto owner;
 
     private Long requestId;
 
