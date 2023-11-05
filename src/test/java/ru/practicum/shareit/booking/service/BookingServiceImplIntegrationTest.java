@@ -1,10 +1,13 @@
 package ru.practicum.shareit.booking.service;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.dto.AnswerBookingDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -17,16 +20,13 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.transaction.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Transactional
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest
 class BookingServiceImplIntegrationTest {
 
@@ -42,6 +42,7 @@ class BookingServiceImplIntegrationTest {
     @Autowired
     private BookingRepository bookingRepository;
 
+    @DirtiesContext
     @Test
     void createBooking() {
         User booker = new User();
@@ -78,6 +79,7 @@ class BookingServiceImplIntegrationTest {
         assertEquals(result.getEnd(), bookingDto.getEnd());
     }
 
+    @DirtiesContext
     @Test
     void createBooking_itemUnavailable() {
         User booker = new User();
@@ -105,6 +107,7 @@ class BookingServiceImplIntegrationTest {
         assertThrows(EntityNotAvailable.class, () -> bookingService.createBooking(booker.getId(), bookingDto));
     }
 
+    @DirtiesContext
     @Test
     void createBooking_startAfterEnd() {
         User booker = new User();
@@ -132,6 +135,7 @@ class BookingServiceImplIntegrationTest {
         assertThrows(EntityNotAvailable.class, () -> bookingService.createBooking(booker.getId(), bookingDto));
     }
 
+    @DirtiesContext
     @Test
     void createBooking_bookerIsOwner() {
         User owner = new User();
@@ -154,6 +158,7 @@ class BookingServiceImplIntegrationTest {
         assertThrows(EntityNotFoundException.class, () -> bookingService.createBooking(owner.getId(), bookingDto));
     }
 
+    @DirtiesContext
     @Test
     void confirmationBooking_updateStatusToApproved() {
         LocalDateTime now = LocalDateTime.now();
@@ -188,6 +193,7 @@ class BookingServiceImplIntegrationTest {
         assertEquals(updatedBooking.getStatus(), Status.APPROVED);
     }
 
+    @DirtiesContext
     @Test
     void confirmationBooking_updateStatusToRejected() {
         LocalDateTime now = LocalDateTime.now();
@@ -223,7 +229,7 @@ class BookingServiceImplIntegrationTest {
         assertEquals(updatedBooking.getStatus(), Status.REJECTED);
     }
 
-
+    @DirtiesContext
     @Test
     void confirmationBooking_wrongBookingId() {
         LocalDateTime now = LocalDateTime.now();
@@ -257,6 +263,7 @@ class BookingServiceImplIntegrationTest {
                 () -> bookingService.confirmationBooking(savedOwner.getId(), 99L, false));
     }
 
+    @DirtiesContext
     @Test
     void confirmationBooking_notByOwner() {
         LocalDateTime now = LocalDateTime.now();
@@ -290,6 +297,7 @@ class BookingServiceImplIntegrationTest {
                 () -> bookingService.confirmationBooking(savedBooker.getId(), savedBooking.getId(), false));
     }
 
+    @DirtiesContext
     @Test
     void confirmationBooking_ifStatusConfirmed() {
         LocalDateTime now = LocalDateTime.now();
@@ -323,6 +331,7 @@ class BookingServiceImplIntegrationTest {
                 () -> bookingService.confirmationBooking(savedOwner.getId(), savedBooking.getId(), false));
     }
 
+    @DirtiesContext
     @Test
     void getBooking() {
         LocalDateTime now = LocalDateTime.now();
@@ -358,6 +367,7 @@ class BookingServiceImplIntegrationTest {
         assertEquals(result.getId(), savedBooking.getId());
     }
 
+    @DirtiesContext
     @Test
     void getBooking_byThirdUser() {
         LocalDateTime now = LocalDateTime.now();
@@ -391,11 +401,11 @@ class BookingServiceImplIntegrationTest {
                 () -> bookingService.getBooking(booking.getId(), 99L));
     }
 
-
+    @DirtiesContext
     @Test
     void getAllBookingByUser() {
         LocalDateTime now = LocalDateTime.now();
-        Pageable pageable =  PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
 
         User booker = new User();
@@ -453,10 +463,11 @@ class BookingServiceImplIntegrationTest {
         assertEquals(actualBookingsUser.get(1).getId(), sBooking.getId());
     }
 
+    @DirtiesContext
     @Test
     void getAllBookingByOwner() {
         LocalDateTime now = LocalDateTime.now();
-        Pageable pageable =  PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
 
         User booker = new User();

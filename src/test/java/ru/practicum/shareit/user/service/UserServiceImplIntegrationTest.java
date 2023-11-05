@@ -4,19 +4,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.transaction.Transactional;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Transactional
+
 @SpringBootTest
 class UserServiceImplIntegrationTest {
 
@@ -26,6 +25,7 @@ class UserServiceImplIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @DirtiesContext
     @Test
     void createUser() {
         UserDto userDto = new UserDto();
@@ -43,6 +43,7 @@ class UserServiceImplIntegrationTest {
         assertEquals(userDto.getEmail(), userRespond.getEmail());
     }
 
+    @DirtiesContext
     @Test
     public void createUser_duplicateEmail() {
         String email = "alex@ya.ru";
@@ -59,6 +60,7 @@ class UserServiceImplIntegrationTest {
         assertThrows(DataIntegrityViolationException.class, () -> userService.createUser(secondUserDto));
     }
 
+    @DirtiesContext
     @Test
     void updateUser() {
         User user = new User();
@@ -79,6 +81,7 @@ class UserServiceImplIntegrationTest {
         assertEquals(updatedUser.getEmail(), newUserDto.getEmail());
     }
 
+    @DirtiesContext
     @Test
     public void updateUser_userNotInBase() {
         UserDto newUserDto = new UserDto();
@@ -88,6 +91,7 @@ class UserServiceImplIntegrationTest {
         assertThrows(EntityNotFoundException.class, () -> userService.updateUser(newUserDto, 99L));
     }
 
+    @DirtiesContext
     @Test
     public void updateUser_duplicateEmail() {
         User user = new User();
@@ -123,6 +127,7 @@ class UserServiceImplIntegrationTest {
         assertThrows(EntityNotFoundException.class, () -> userService.getUser(99L));
     }
 
+    @DirtiesContext
     @Test
     void getAllUsers() {
         User user1 = new User();
@@ -144,6 +149,7 @@ class UserServiceImplIntegrationTest {
         assertEquals(usersDtoRespond.get(1).getEmail(), user2.getEmail());
     }
 
+    @DirtiesContext
     @Test
     void getAllUsers_beforeAddUsers() {
         List<UserDto> usersDtoRespond = userService.getAllUsers();
