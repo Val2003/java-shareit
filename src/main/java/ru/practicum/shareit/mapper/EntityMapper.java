@@ -67,7 +67,6 @@ public interface EntityMapper {
 
     User toUser(UserDto userDto);
 
-    UserDto toUserDtoopt(Optional<User> user);
     UserDto toUserDto(User user);
 
     default User updatedUser(UserDto userDto, User user) {

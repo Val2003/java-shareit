@@ -81,7 +81,7 @@ class ItemServiceImplTest {
     @BeforeEach
     void beforeEach() {
         pageable =  PageRequest.of(0, 10);
-        itemService = new ItemServiceImpl(userService, bookingRepository, commentRepository,
+        itemService = new ItemServiceImpl( bookingRepository, commentRepository,
                 itemRepository, userRepository, itemRequestRepository);
         user1 = new User(1L, "user1", "mail1@ya.ru");
         user2 = new User(2L, "user2", "mail2@ya.ru");
