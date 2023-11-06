@@ -74,7 +74,7 @@ class ItemRequestControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(answerItemRequestDto.getId()), Long.class))
                 .andExpect(jsonPath("$.description", is(answerItemRequestDto.getDescription())))
                 .andExpect(jsonPath("$.created", is(answerItemRequestDto.getCreated().toString())));

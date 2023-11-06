@@ -3,6 +3,8 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,59 +29,61 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
 
+    public static final String userIdHeader = "X-Sharer-User-Id";
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@RequestBody ItemDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto,
+                                              @RequestHeader(userIdHeader) Long userId) {
         log.info("POST /items : user ID {} creates item from DTO - {}", userId, itemDto);
-        return itemService.createItem(userId, itemDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(itemService.createItem(userId, itemDto));
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@PathVariable("itemId") Long itemId,
-                              @RequestBody ItemDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<ItemDto> updateItem(@PathVariable("itemId") Long itemId,
+                                              @RequestBody ItemDto itemDto,
+                                              @RequestHeader(userIdHeader) Long userId) {
         log.info("PATCH /items/{} : update item by ID from user ID {}, item DTO - {}", itemId, userId, itemDto);
-        return itemService.updateItem(itemId, itemDto, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.updateItem(itemId, itemDto, userId));
     }
 
     @GetMapping("/{itemId}")
-    public AnswerItemDto getItem(@PathVariable("itemId") Long itemId,
-                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<AnswerItemDto> getItem(@PathVariable("itemId") Long itemId,
+                                                 @RequestHeader(userIdHeader) Long userId) {
         log.info("GET /items/{} : get item by ID from user ID {}", itemId, userId);
-        return itemService.getItem(itemId, userId);
+        return ResponseEntity
+                .status(HttpStatus.OK).body(itemService.getItem(itemId, userId));
     }
 
     @GetMapping
-    public List<AnswerItemDto> getItemsByUser(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<List<AnswerItemDto>> getItemsByUser(
+            @RequestHeader(userIdHeader) Long userId,
             @RequestParam(value = "from", defaultValue = "0", required = false) int from,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
         if (from < 0 || size < 1) {
             throw new EntityNotAvailable("Invalid \"size\" or \"from\"");
         }
         log.info("GET /items?from={}&size={} : get list of items from user ID {}", from, size, userId);
-        return itemService.getItemsByUser(userId, PageRequest.of(from / size, size));
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.getItemsByUser(userId, PageRequest.of(from / size, size)));
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getUsersAvailableItems(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<List<ItemDto>> getUsersAvailableItems(
+            @RequestHeader(userIdHeader) Long userId,
             @RequestParam String text,
             @RequestParam(value = "from", defaultValue = "0", required = false) int from,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
         log.info("GET /items/search?text={}&from={}&size={} : get list of available items of user ID {} with text",
                 text, from, size, userId);
-        return itemService.getAvailableItems(userId, text, PageRequest.of(from / size, size));
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.getAvailableItems(userId, text, PageRequest.of(from / size, size)));
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@PathVariable Long itemId,
-                                    @RequestBody CommentDto commentDto,
-                                    @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<CommentDto> createComment(@PathVariable Long itemId,
+                                                    @RequestBody CommentDto commentDto,
+                                                    @RequestHeader(userIdHeader) Long userId) {
         log.info("POST /items/{}/comment : user ID {} creates comment - {}", itemId, userId, commentDto);
-        return itemService.createComment(itemId, userId, commentDto);
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.createComment(itemId, userId, commentDto));
     }
 
 }

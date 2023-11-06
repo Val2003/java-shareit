@@ -88,7 +88,7 @@ class BookingControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(answerBookingDto.getId()), Long.class))
                 .andExpect(jsonPath("$.item.id", is(answerBookingDto.getItem().getId()), Long.class))
                 .andExpect(jsonPath("$.booker.id", is(answerBookingDto.getBooker().getId()), Long.class))
