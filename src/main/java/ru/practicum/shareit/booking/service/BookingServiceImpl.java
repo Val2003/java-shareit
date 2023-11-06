@@ -2,10 +2,11 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.dto.AnswerBookingDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.AnswerBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
@@ -92,7 +93,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<AnswerBookingDto> getAllBookingByUser(Long userId, String rawState) {
+    public List<AnswerBookingDto> getAllBookingByUser(Long userId, String rawState, Pageable pageable) {
         State state = getState(rawState);
         if (!userRepository.existsById(userId)) {
             throw new EntityNotFoundException("User with ID " + userId + " does not exist");
@@ -100,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = new ArrayList<>();
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findAllByBooker_IdOrderByStartDesc(userId);
+                bookings = bookingRepository.findAllByBooker_IdOrderByStartDesc(userId, pageable);
                 break;
             case PAST:
                 bookings = bookingRepository.findAllByBooker_IdAndEndIsBefore(userId, LocalDateTime.now(), SORT);
@@ -126,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<AnswerBookingDto> getAllBookingByOwner(Long userId, String rawState) {
+    public List<AnswerBookingDto> getAllBookingByOwner(Long userId, String rawState, Pageable pageable) {
         State state = getState(rawState);
         if (!userRepository.existsById(userId)) {
             throw new EntityNotFoundException("User with ID " + userId + " does not exist");
@@ -134,7 +135,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = new ArrayList<>();
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(userId);
+                bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(userId, pageable);
                 break;
             case PAST:
                 bookings = bookingRepository.findAllByItem_Owner_IdAndEndIsBefore(userId, LocalDateTime.now(), SORT);
