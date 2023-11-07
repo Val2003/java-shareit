@@ -5,12 +5,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+@Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByBooker_IdOrderByStartDesc(Long userId, Pageable pageable);
@@ -35,13 +38,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItem_Owner_IdAndStatus(Long userId, Status status);
 
-    Booking findFirstByItem_IdAndItem_Owner_IdAndStartIsBefore(
-            Long itemId, Long userId, LocalDateTime now, Sort sort);
+    Optional<Booking> findFirstByItem_IdAndItem_Owner_IdAndStartIsBefore(
+            Long itemId, Long userId, LocalDateTime end, Sort sort);
 
     List<Booking> findFirstByItem_IdInAndItem_Owner_IdAndStartIsBefore(
             List<Long> itemsId, Long userId, LocalDateTime now, Sort sort);
 
-    Booking findFirstByItem_IdAndItem_Owner_IdAndStartIsAfterAndStatusIsNotAndStatusIsNot(
+    Optional<Booking> findFirstByItem_IdAndItem_Owner_IdAndStartIsAfterAndStatusIsNotAndStatusIsNot(
             Long itemId, Long userId, LocalDateTime start, Status status1, Status status2, Sort sort);
 
     List<Booking> findFirstByItem_IdInAndItem_Owner_IdAndStartIsAfterAndStatusIsNotAndStatusIsNot(

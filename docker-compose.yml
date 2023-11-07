@@ -10,6 +10,7 @@ services:
       - server
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
+    restart: on-failure
 
   server:
     build:
@@ -19,8 +20,9 @@ services:
       - "9090:9090"
     depends_on:
       - db
+    restart: on-failure
     environment:
-      - DB_NAME=shareit
+      - DB_NAME=shareitdb
       - DB_HOST=db
       - DB_PORT=5432
       - POSTGRES_USER=shareit
@@ -34,6 +36,6 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=shareit
+      - POSTGRES_DB=shareitdb
       - POSTGRES_USER=shareit
       - POSTGRES_PASSWORD=shareit

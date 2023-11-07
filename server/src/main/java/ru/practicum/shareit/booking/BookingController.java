@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.AnswerBookingDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exceptions.EntityNotAvailable;
 
 import java.util.List;
 
@@ -63,6 +64,9 @@ public class BookingController {
             @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
             @RequestParam(value = "from", defaultValue = "0", required = false) int from,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        if (from < 0 || size < 1) {
+            throw new EntityNotAvailable("Invalid \"size\" or \"from\"");
+        }
         log.info("GET /bookings?state={}&from={}&size={} : get list of bookings by user ID {} with state",
                 state, from, size, userId);
         return ResponseEntity.status(HttpStatus.OK)
@@ -75,6 +79,9 @@ public class BookingController {
             @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
             @RequestParam(value = "from", defaultValue = "0", required = false) int from,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        if (from < 0 || size < 1) {
+            throw new EntityNotAvailable("Invalid \"size\" or \"from\"");
+        }
         log.info("GET /bookings/owner?state={}&from={}&size={} : get list of bookings by owner ID {} with state",
                 state, from, size, userId);
         return ResponseEntity.status(HttpStatus.OK)

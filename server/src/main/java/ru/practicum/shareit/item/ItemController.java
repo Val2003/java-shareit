@@ -20,6 +20,8 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 
@@ -71,8 +73,11 @@ public class ItemController {
     public ResponseEntity<List<ItemDto>> getUsersAvailableItems(
             @RequestHeader(userIdHeader) Long userId,
             @RequestParam String text,
-            @RequestParam(value = "from", defaultValue = "0", required = false) int from,
-            @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+            @PositiveOrZero @RequestParam(value = "from", defaultValue = "0", required = false) int from,
+            @Positive @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        if (from < 0 || size < 1) {
+            throw new EntityNotAvailable("Invalid \"size\" or \"from\"");
+        }
         log.info("GET /items/search?text={}&from={}&size={} : get list of available items of user ID {} with text",
                 text, from, size, userId);
         return ResponseEntity.status(HttpStatus.OK).body(itemService.getAvailableItems(userId, text, PageRequest.of(from / size, size)));
