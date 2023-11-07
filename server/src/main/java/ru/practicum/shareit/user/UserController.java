@@ -16,6 +16,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -27,7 +28,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody  UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
         log.info("POST /users : create user from DTO - {}", userDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED).body(userService.createUser(userDto));

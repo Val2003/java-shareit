@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.exceptions.EntityNotAvailable;
 import ru.practicum.shareit.request.dto.AnswerItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -30,7 +32,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ResponseEntity<AnswerItemRequestDto> createItemRequest(@RequestHeader(userIdHeader) Long userId,
-                                                                  @RequestBody ItemRequestDto itemRequestDto) {
+                                                                  @Valid @RequestBody ItemRequestDto itemRequestDto) {
         log.info("POST /requests : user ID {} creates itemRequest from DTO - {}", userId, itemRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(itemRequestService.createItemRequest(userId, itemRequestDto));
     }
@@ -46,6 +48,9 @@ public class ItemRequestController {
             @RequestHeader(userIdHeader) Long userId,
             @RequestParam(value = "from", defaultValue = "0", required = false) int from,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        if (from < 0 || size < 1) {
+            throw new EntityNotAvailable("Invalid \"size\" or \"from\"");
+        }
         log.info("GET /requests/all?from={}&size={} : get list of itemRequests, user ID {}", from, size, userId);
         return ResponseEntity.status(HttpStatus.OK).body(itemRequestService.getItemRequests(userId, PageRequest.of(from / size, size)));
     }

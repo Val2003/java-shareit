@@ -20,6 +20,7 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto,
+    public ResponseEntity<ItemDto> createItem(@RequestBody @Valid ItemDto itemDto,
                                               @RequestHeader(userIdHeader) Long userId) {
         log.info("POST /items : user ID {} creates item from DTO - {}", userId, itemDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(itemService.createItem(userId, itemDto));
@@ -85,7 +86,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<CommentDto> createComment(@PathVariable Long itemId,
-                                                    @RequestBody CommentDto commentDto,
+                                                    @Valid @RequestBody CommentDto commentDto,
                                                     @RequestHeader(userIdHeader) Long userId) {
         log.info("POST /items/{}/comment : user ID {} creates comment - {}", itemId, userId, commentDto);
         return ResponseEntity.status(HttpStatus.OK).body(itemService.createComment(itemId, userId, commentDto));
