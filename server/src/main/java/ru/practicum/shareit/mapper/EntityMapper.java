@@ -19,6 +19,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -105,6 +106,11 @@ public interface EntityMapper {
                 .created(itemRequest.getCreated())
                 .items(items.stream().map(this::toItemDto).collect(Collectors.toList()))
                 .build();
+    }
+
+    default InfoBookingDto toInfoBookingDto(Optional<Booking> firstByItemIdAndItemOwnerIdAndStartIsBefore) {
+
+        return firstByItemIdAndItemOwnerIdAndStartIsBefore.map(this::toInfoBookingDto).orElse(null);
     }
 
     default ItemRequest toItemRequest(ItemRequestDto request, User requester) {
